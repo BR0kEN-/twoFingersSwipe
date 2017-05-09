@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>twoFingersSwipe by BR0kEN</title>
+  <meta name="author" content="BR0kEN, Firstvector.org" />
+  <link rel="author" href="https://plus.google.com/118101065933954772499" />
+  <link rel="publisher" href="https://plus.google.com/104161863572967579403" />
+
+  <style>
+    .slider {
+      position: relative;
+      height: 400px;
+      overflow-x: hidden;
+      background: #000;
+    }
+    .slider .slides {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      position: absolute;
+      z-index: 1;
+      height: 100%;
+      left: 0;
+      top: 0;
+    }
+    .slider .slide {
+      flex-direction: column;
+      width: 33%;
+      background: #f00;
+    }
+    .slider .controls {
+      position: absolute;
+      height: inherit;
+      width: 100%;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+    }
+    .slider .controls > * {
+      position: absolute;
+      color: #fff;
+      cursor: pointer;
+      padding: 0 15px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      line-height: 40px;
+      background: rgba(0, 0, 0, .3);
+      transition: .3s;
+    }
+    .slider .controls > *.active,
+    .slider .controls > *:hover {
+      background: rgba(0, 0, 0, .6);
+    }
+    .slider .controls .left {
+      right: 0;
+      transform: rotate(90deg);
+    }
+    .slider .controls .right {
+      left: 0;
+      transform: rotate(-90deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="slider">
+    <div class="controls">
+      <span class="right">Prev</span>
+      <span class="left">Next</span>
+    </div>
+
+    <ul class="slides">
+      <li class="slide" style="background: url(http://cdn.wallpapersafari.com/47/1/rDcgl1.jpg);"></li>
+      <li class="slide" style="background: url(https://static1.squarespace.com/static/554a657ee4b02adda6a006aa/t/5572510fe4b00834870b7d21/1433555217862/by-nature-gallery-trunk-showjpg?format=original);"></li>
+      <li class="slide" style="background: url(http://yoganature.fi/wp-content/uploads/2016/12/yoga_nature_blog_round.jpg);"></li>
+      <li class="slide" style="background: url(http://teencorr.com.ua/wp-content/uploads/2016/10/Nature-and-arts-Festival-France-3-500x500.jpg);"></li>
+      <li class="slide" style="background: url(http://www.tourism.australia.com/images/TA_109265_Palmtrees.jpg);"></li>
+      <li class="slide" style="background: url(https://pi.tedcdn.com/r/pf.tedcdn.com/images/playlists/reconnect_with_nature.jpg?quality=89&w=500);"></li>
+      <li class="slide" style="background: url(https://s-media-cache-ak0.pinimg.com/736x/32/75/78/3275780d1bba460cd44a5c94d43f6c76.jpg);"></li>
+      <li class="slide" style="background: url(http://www.womenshealthmag.com/sites/womenshealthmag.com/files/images/top-nature-trails-03_0.jpg);"></li>
+      <li class="slide" style="background: url(https://s-media-cache-ak0.pinimg.com/736x/4f/17/d4/4f17d4b6adf57250bfdb7f650a0bfc01.jpg);"></li>
+      <li class="slide" style="background: url(https://ptes.org/wp-content/uploads/2016/10/Red-Squirrel.jpg);"></li>
+    </ul>
+  </div>
+
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://cdn.rawgit.com/BR0kEN-/twoFingersSwipe/6e27f88384ac32a3cefe0eccc4c81d6989279aa4/index.js"></script>
+
+  <script>
+    (function ($, slidesPerFrame, changeTransition) {
+      var $sliderContainer = $('.slider');
+      var $slidesWrapper = $sliderContainer.find('.slides');
+      var $controls = $sliderContainer.find('.controls');
+      var $slides = $slidesWrapper.children('li');
+      var activeNumber = 0;
+      var slideWidth = 0;
+      var maxWidth = 0;
+      var swipes = {
+        left: 0,
+        right: 0
+      };
+
+      changeTransition *= 1000;
+
+      $(window).bind('resize', (function resize() {
+        slideWidth = window.innerWidth / slidesPerFrame;
+        maxWidth = slideWidth * $slides.length;
+
+        $slides.width(slideWidth);
+        $slidesWrapper.width(maxWidth);
+
+        var leftAbsolute = slideWidth * activeNumber;
+
+        $slidesWrapper.css('transition', '0s');
+        $slidesWrapper.css('left', parseFloat($slidesWrapper.css('left')) > 0 ? leftAbsolute : -leftAbsolute);
+
+        setTimeout(function () {
+          $slidesWrapper.css('transition', changeTransition / 1000 + 's');
+        }, 500);
+
+        return resize;
+      })());
+
+      $controls.children('span').bind('click', function (event) {
+        event.preventDefault();
+
+        var leftAbsolute = slideWidth * activeNumber;
+
+        switch (this.className) {
+          case 'left':
+            if (Math.floor(leftAbsolute + window.innerWidth) < Math.floor(maxWidth - slideWidth)) {
+              $slidesWrapper.css('left', -(leftAbsolute + slideWidth));
+              activeNumber++;
+            }
+            break;
+
+          case 'right':
+            if (Math.floor(leftAbsolute) >= Math.floor(slideWidth)) {
+              $slidesWrapper.css('left', -(leftAbsolute - slideWidth));
+              activeNumber--;
+            }
+            break;
+        }
+      });
+
+      $controls.bind('twoFingersSwipe', function (event, direction) {
+        // Wait until animation ends, do not scroll like crazy.
+        if (0 === swipes[direction]++) {
+          var $control = $controls.children('.' + direction);
+
+          $control.trigger('click').addClass('active');
+
+          setTimeout(function () {
+            // Animation ended. Allow to perform next action.
+            swipes[direction] = 0;
+            $control.removeClass('active');
+          }, changeTransition + 200);
+        }
+      });
+    })(jQuery, 3, 0.5);
+  </script>
+</body>
+</html>
