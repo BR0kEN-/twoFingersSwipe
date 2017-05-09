@@ -1,0 +1,27 @@
+{
+  "name": "twoFingersSwipe",
+  "main": "index.js",
+  "license": "MIT",
+  "version": "0.1",
+  "repository": "BR0kEN-/twoFingersSwipe",
+  "homepage": "http://BR0kEN-.github.io/twoFingersSwipe",
+  "bugs": "https://github.com/BR0kEN-/twoFingersSwipe/issues",
+  "description": "Horizontal swipe event.",
+  "author": {
+    "name": "Sergii Bondarenko",
+    "email": "sb@firstvector.org"
+  },
+  "dependencies": {
+    "jquery": ">=1.4.x"
+  },
+  "keywords": [
+    "jquery-plugin",
+    "horizontal",
+    "fingers",
+    "scroll",
+    "event",
+    "swipe",
+    "macOS",
+    "osx"
+  ]
+}
